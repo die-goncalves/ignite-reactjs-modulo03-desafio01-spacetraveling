@@ -55,7 +55,7 @@ O [template](https://github.com/rocketseat-education/ignite-template-reactjs-cri
     - Selecione o botão Custom Type na barra lateral, clique em Repeatable Type e digite o nome 'posts'.
     - O type 'posts' deve ter um formato. Siga o arquivo json - [posts.json](/assets/posts.json), ou a imagem a seguir:
       <div>
-        <img alt="posts" title="posts" src="/posts.jpg" width="75%"/>
+        <img alt="posts" title="posts" src="/assets/posts.jpg" width="75%"/>
       </div>
     - Agora com o 'posts' estruturado clique no botão Documents e crie alguns exemplos para testar a aplicação.
 
