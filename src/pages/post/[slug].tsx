@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
 import { useRouter } from 'next/router'
 import Header from '../../components/Header';
 
@@ -42,7 +43,7 @@ export default function Post({ post }: PostProps) {
   if (router.isFallback) {
     return (
       <>
-        <Header /> 
+        <Header />
         <div>Carregando...</div>
       </>
     )
@@ -53,53 +54,57 @@ export default function Post({ post }: PostProps) {
     acc += numberWordsEachContent;
     return acc;
   }, 0);
-  const readTime = Math.ceil(totalWords/200);
-  
+  const readTime = Math.ceil(totalWords / 200);
+
   return (
     <>
+      <Head>
+        <title>{post.data.title} | spacetraveling</title>
+      </Head>
+
       <Header />
       <main className={styles.container}>
-          <img src={post.data.banner.url} className={styles.banner} alt="banner"/>
-          <article className={styles.post}>
-            <h1>{post.data.title}</h1>
-            <div className={styles.postInfo}>
-                <div>
-                  <FiCalendar />
-                  <time>{format(new Date(post.first_publication_date), "dd MMM yyyy", { locale: ptBR })}</time>
-                </div>
-                <div>
-                  <FiUser />
-                  <p>{post.data.author}</p>
-                </div>
-                <div>
-                  <FiClock />
-                  <p>{readTime} min</p>
-                </div>
-              </div>
-
-            <div className={styles.postContent}>
-              {post.data.content.map((content) => {
-                return (
-                  <div key={content.heading} className={styles.singleContent}>
-                    <h2>{content.heading}</h2>
-                    <div className={styles.htmlContent} dangerouslySetInnerHTML={{ __html: RichText.asHtml(content.body) }}></div>
-                  </div>
-                )
-              })}
+        <img src={post.data.banner.url} className={styles.banner} alt="banner" />
+        <article className={styles.post}>
+          <h1>{post.data.title}</h1>
+          <div className={styles.postInfo}>
+            <div>
+              <FiCalendar />
+              <time>{format(new Date(post.first_publication_date), "dd MMM yyyy", { locale: ptBR })}</time>
             </div>
-          </article>
+            <div>
+              <FiUser />
+              <p>{post.data.author}</p>
+            </div>
+            <div>
+              <FiClock />
+              <p>{readTime} min</p>
+            </div>
+          </div>
+
+          <div className={styles.postContent}>
+            {post.data.content.map((content) => {
+              return (
+                <div key={content.heading} className={styles.singleContent}>
+                  <h2>{content.heading}</h2>
+                  <div className={styles.htmlContent} dangerouslySetInnerHTML={{ __html: RichText.asHtml(content.body) }}></div>
+                </div>
+              )
+            })}
+          </div>
+        </article>
       </main>
     </>
   )
 }
-                
+
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  
+
   const posts = await prismic.query([
     Prismic.predicates.at('document.type', 'posts')
   ], {
-      pageSize: 1,
+    pageSize: 1,
   })
 
   const postsUid = posts.results.map((post) => {
@@ -109,13 +114,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
   })
   const paths = postsUid.map((post) => {
     return (
-      { params: { slug : post.uid } }
+      { params: { slug: post.uid } }
     )
   })
-  
+
   return {
-      paths,
-      fallback: true
+    paths,
+    fallback: true
   }
 }
 
@@ -124,7 +129,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
-  
+
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
